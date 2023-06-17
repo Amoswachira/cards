@@ -1,5 +1,6 @@
 package com.cards.cards.filters;
 
+import com.cards.cards.exception.CustomException;
 import com.cards.cards.utils.JwtTokenProvider;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -27,12 +28,19 @@ public class JwtAuthenticationFilter extends BasicAuthenticationFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws IOException, ServletException {
         String token = jwtTokenProvider.extractToken(request);
+        try {
+            if (token != null && jwtTokenProvider.validateToken(token)) {
+                String email = jwtTokenProvider.extractEmail(token);
+                Authentication authentication = new UsernamePasswordAuthenticationToken(email, null, null);
+                SecurityContextHolder.getContext().setAuthentication(authentication);
+            }
 
-        if (token != null && jwtTokenProvider.validateToken(token)) {
-            String email = jwtTokenProvider.extractEmail(token);
-            Authentication authentication = new UsernamePasswordAuthenticationToken(email, null, null);
-            SecurityContextHolder.getContext().setAuthentication(authentication);
+        } catch (CustomException ex){
+            response.sendError(ex.getHttpStatus().value(), ex.getMessage());
+            return;
         }
+
+
 
         filterChain.doFilter(request, response);
     }

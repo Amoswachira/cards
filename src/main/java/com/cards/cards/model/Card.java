@@ -2,7 +2,7 @@ package com.cards.cards.model;
 
 
 import javax.persistence.*;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 @Entity
 @Table(name = "cards")
@@ -14,24 +14,43 @@ public class Card {
     @Column(nullable = false)
     private String name;
 
-    @Column
     private String description;
 
-    @Column
     private String color;
 
-    @Column(nullable = false)
-    private String status;
-
-    @Column(name = "created_at")
-    private LocalDateTime createdAt;
+    @Enumerated(EnumType.STRING)
+    private CardStatus status;
 
     @ManyToOne
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
+    private LocalDate creationDate;
 
-    // Getters and Setters, and any additional methods
+    private String searchCards;
+
+    public Card() {
+        // Default constructor required by JPA
+    }
+
+    public Card(String name, String description, String color, CardStatus status, User user, LocalDate creationDate) {
+        this.name = name;
+        this.description = description;
+        this.color = color;
+        this.status = status;
+        this.user = user;
+        this.creationDate = creationDate;
+    }
+
+    // Getters and setters
+
+    public String getSearchCards() {
+        return searchCards;
+    }
+
+    public void setSearchCards(String searchCards) {
+        this.searchCards = searchCards;
+    }
 
     public Long getId() {
         return id;
@@ -65,27 +84,23 @@ public class Card {
         this.color = color;
     }
 
-    public String getStatus() {
+    public CardStatus getStatus() {
         return status;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(CardStatus status) {
         this.status = status;
-    }
-
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCreatedAt(LocalDateTime createdAt) {
-        this.createdAt = createdAt;
-    }
-
-    public User getUser() {
-        return user;
     }
 
     public void setUser(User user) {
         this.user = user;
+    }
+
+    public LocalDate getCreationDate() {
+        return creationDate;
+    }
+
+    public void setCreationDate(LocalDate creationDate) {
+        this.creationDate = creationDate;
     }
 }

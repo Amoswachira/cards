@@ -2,6 +2,7 @@ package com.cards.cards.model;
 
 
 import javax.persistence.*;
+import java.util.List;
 
 @Entity
 @Table(name = "users")
@@ -19,6 +20,9 @@ public class User {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private Role role;
+
+    @OneToMany(mappedBy = "user")
+    private List<Card> cards;
 
     public Long getId() {
         return id;
@@ -50,5 +54,10 @@ public class User {
 
     public void setRole(Role role) {
         this.role = role;
+    }
+
+
+    public void setCards(List<Card> cards) {
+        this.cards = cards;
     }
 }
